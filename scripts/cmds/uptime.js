@@ -3,7 +3,7 @@ module.exports = {
     name: "uptime",
     aliases: ["up", "upt"],
     version: "1.0",
-    author: "T A N J I L",
+    author: "〲T A N J I L ツ",
     role: 0,
     shortDescription: {
       en: "Displays the uptime of the bot."
@@ -31,6 +31,7 @@ module.exports = {
 ├─────────────
 │ ⏳ ᴛɪᴍᴇ ʟᴇꜰᴛ:
 │
+│   • ${days} ᴅᴀʏꜱ
 │   • ${hours} ʜᴏᴜʀꜱ
 │   • ${minutes} ᴍɪɴᴜᴛᴇꜱ
 │   • ${seconds} ꜱᴇᴄᴏɴᴅꜱ

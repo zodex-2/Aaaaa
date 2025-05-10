@@ -5,14 +5,14 @@ module.exports = { config: { name: "notification", aliases: ["notify", "noti"], 
 langs: {
 	vi: {
 		missingMessage: "Vui lòng nhập tin nhắn bạn muốn gửi đến tất cả các nhóm",
-		notification: "᳃•••••••••••𝐎 𝐖 𝐍 𝐄 𝐑••••••••••᳃\n\n🎀  ᯽𝐍𝐎𝐓𝐈 𝐅𝐈𝐂𝐈 𝐓𝐈𝐎𝐍᯽ 🎀\n\n--------------------------------------------",
+		notification: "᳃•••••𝐎 𝐖 𝐍 𝐄 𝐑•••••᳃\n\n🎀  ᯽𝐍𝐎𝐓𝐈 𝐅𝐈𝐂𝐈 𝐓𝐈𝐎𝐍᯽ 🎀\n\n--------------------------------------------",
 		sendingNotification: "Bắt đầu gửi thông báo từ admin bot đến %1 nhóm chat",
 		sentNotification: "✅ Đã gửi thông báo đến %1 nhóm thành công",
 		errorSendingNotification: "Có lỗi xảy ra khi gửi đến %1 nhóm:\n%2"
 	},
 	en: {
 		missingMessage: "Please enter the message you want to send to all groups",
-		notification: "᳃•••••••••••𝐎 𝐖 𝐍 𝐄 𝐑••••••••••᳃\n\n🎀  ᯽𝐍𝐎𝐓𝐈 𝐅𝐈𝐂𝐈 𝐓𝐈𝐎𝐍᯽ 🎀\n\n--------------------------------------------",
+		notification: "᳃•••••𝐎 𝐖 𝐍 𝐄 𝐑•••••᳃\n\n🎀  ᯽𝐍𝐎𝐓𝐈 𝐅𝐈𝐂𝐈 𝐓𝐈𝐎𝐍᯽ 🎀\n\n--------------------------------------------",
 		sendingNotification: "Start sending notification from admin bot to %1 chat groups",
 		sentNotification: "✅ Sent notification to %1 groups successfully",
 		errorSendingNotification: "An error occurred while sending to %1 groups:\n%2"

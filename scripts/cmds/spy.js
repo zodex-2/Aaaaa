@@ -1,66 +1,75 @@
 module.exports = {
   config: {
     name: "spy",
-    version: "1.0",
-    author: "Shikaki",
+    version: "3.0",
+    author: "T A N J I L",
     countDown: 60,
     role: 0,
-    shortDescription: "Get user information and avatar",
-    longDescription: "Get user information and avatar by mentioning",
+    shortDescription: "See detailed user info",
+    longDescription: "Fetch full profile info including name, UID, gender, balance, and more.",
     category: "image",
   },
 
-   onStart: async function ({ event, message, usersData, api, args, getLang }) {
-    let avt;
+  onStart: async function ({ event, message, usersData, api, args }) {
     const uid1 = event.senderID;
     const uid2 = Object.keys(event.mentions)[0];
     let uid;
 
     if (args[0]) {
-      // Check if the argument is a numeric UID
       if (/^\d+$/.test(args[0])) {
         uid = args[0];
       } else {
-        // Check if the argument is a profile link
         const match = args[0].match(/profile\.php\?id=(\d+)/);
-        if (match) {
-          uid = match[1];
-        }
+        if (match) uid = match[1];
       }
     }
 
     if (!uid) {
-      // If no UID was extracted from the argument, use the default logic
-      uid = event.type === "message_reply" ? event.messageReply.senderID : uid2 || uid1;
+      uid = event.type === "message_reply"
+        ? event.messageReply.senderID
+        : uid2 || uid1;
     }
 
-    api.getUserInfo(uid, async (err, userInfo) => {
-      if (err) {
-        return message.reply("Failed to retrieve user information.");
-      }
+    try {
+      const userInfo = await new Promise((resolve, reject) => {
+        api.getUserInfo(uid, (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        });
+      });
 
       const avatarUrl = await usersData.getAvatarUrl(uid);
+      const data = await usersData.get(uid);
 
-      // Gender mapping
-      let genderText;
-      switch (userInfo[uid].gender) {
-        case 1:
-          genderText = "Girl";
-          break;
-        case 2:
-          genderText = "Boy";
-          break;
-        default:
-          genderText = "Unknown";
-      }
+      const name = userInfo[uid].name || "Unknown";
+      const gender = userInfo[uid].gender === 1 ? "Female" : userInfo[uid].gender === 2 ? "Male" : "Unknown";
+      const isFriend = userInfo[uid].isFriend ? "Yes" : "No";
+      const isBirthday = userInfo[uid].isBirthday ? "Yes" : "No";
+      const profileUrl = `https://www.facebook.com/${uid}`;
+      const balance = data.money || 0;
 
-      // Construct and send the user's information with avatar
-      const userInformation = `❏ Name: ${userInfo[uid].name}\n❏ Profile URL: ${userInfo[uid].profileUrl}\n❏ Gender: ${genderText}\n❏ User Type: ${userInfo[uid].type}\n❏ Is Friend: ${userInfo[uid].isFriend ? "Yes" : "No"}\n❏ Is Birthday today: ${userInfo[uid].isBirthday ? "Yes" : "No"}`;
+      const fancyInfo = 
+`╭───────────────┈⊷
+│ 𝗨𝗦𝗘𝗥 𝗜𝗡𝗙𝗢 𝗧𝗥𝗔𝗖𝗞𝗘𝗥
+├───────────────┈⊷
+│ 🧑‍💼 𝗡𝗮𝗺𝗲: ${name}
+│ 🆔 𝗨𝗜𝗗: ${uid}
+│ ⚖️ 𝗕𝗮𝗹𝗮𝗻𝗰𝗲: $${balance}
+│ ⚧️ 𝗚𝗲𝗻𝗱𝗲𝗿: ${gender}
+│ 🎉 𝗕𝗶𝗿𝘁𝗵𝗱𝗮𝘆 𝗧𝗼𝗱𝗮𝘆: ${isBirthday}
+│ 🤝 𝗙𝗿𝗶𝗲𝗻𝗱: ${isFriend}
+│ 🌐 𝗣𝗿𝗼𝗳𝗶𝗹𝗲: 
+│ ${profileUrl}
+╰───────────────┈⊷`;
 
-      message.reply({
-        body: userInformation,
+      return message.reply({
+        body: fancyInfo,
         attachment: await global.utils.getStreamFromURL(avatarUrl)
       });
-    });
+
+    } catch (e) {
+      console.error(e);
+      return message.reply("⚠️ Could not fetch user data.");
+    }
   }
 };

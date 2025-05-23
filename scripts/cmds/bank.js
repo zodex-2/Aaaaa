@@ -8,7 +8,7 @@ module.exports = {
     description: "Deposit, withdraw, earn interest, loan system",
     guide: {
       vi: "",
-      en: "{pn}Bank:\nInterest - Balance\n - Withdraw \n- Deposit \n- Transfer \n- Richest \n- Loan \n- Payloan"
+      en: "{pn}Bank:\nInterest - Balance\n - Withdraw \n- Deposit \n- Transfer \n- Top \n- Loan \n- Payloan"
     },
     category: "💰 Economy",
     countDown: 1,
@@ -41,54 +41,53 @@ module.exports = {
     const recipientUID = parseInt(args[2]);
 
     switch (command) {
-      
       case undefined:
         return message.reply(
-`∬≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡∬
-                ⳹ 𝐁𝐀𝐍𝐊 𝐒𝐘𝐒𝐓𝐄𝐌 ⳼
-∬≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡∬
+`••••••••••••••••••••
+        ⳹ 𝗕𝗔𝗡𝗞 𝗦𝗬𝗦𝗧𝗘𝗠 ⳼
+          ----------------------
 
-🏦 ➤ 𝗕𝗮𝗹𝗮𝗻𝗰𝗲   : Check your bank balance
-💰 ➤ 𝗗𝗲𝗽𝗼𝘀𝗶𝘁   : Deposit money into the bank
-🏧 ➤ 𝗪𝗶𝘁𝗵𝗱𝗿𝗮𝘄   : Withdraw money from the bank
-📈 ➤ 𝗜𝗻𝘁𝗲𝗿𝗲𝘀𝘁   : Earn interest on your savings
-💳 ➤ 𝗧𝗿𝗮𝗻𝘀𝗳𝗲𝗿   : Send money to others
-👑 ➤ 𝗥𝗶𝗰𝗵𝗲𝘀𝗧   : View the richest users
-🪙 ➤ 𝗟𝗼𝗮𝗻       : Borrow money (Loan system)
-💵 ➤ 𝗣𝗮𝘆 𝗟𝗼𝗮𝗻 : Repay your loan
+🏦 ➤ 𝗕𝗮𝗹𝗮𝗻𝗰𝗲   : Check your bank balance  
+💰 ➤ 𝗗𝗲𝗽𝗼𝘀𝗶𝘁   : Deposit money into the bank  
+🏧 ➤ 𝗪𝗶𝘁𝗵𝗱𝗿𝗮𝘄   : Withdraw money from the bank  
+📈 ➤ 𝗜𝗻𝘁𝗲𝗿𝗲𝘀𝘁   : Earn interest on your savings  
+💳 ➤ 𝗧𝗿𝗮𝗻𝘀𝗳𝗲𝗿   : Send money to others  
+👑 ➤ 𝗧𝗼𝗽        : View the Top 10 richest bank users  
+🪙 ➤ 𝗟𝗼𝗮𝗻       : Borrow money (Loan system)  
+💵 ➤ 𝗣𝗮𝘆 𝗟𝗼𝗮𝗻 : Repay your loan  
 
-∬≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡≡∬`
+••••••••••••••••••••`
         );
 
       case "deposit":
         if (isNaN(amount) || amount <= 0) {
-          return message.reply("❏Please enter a valid amount to deposit.");
+          return message.reply("🎀 Please enter a valid amount to deposit. 💖");
         }
         if (userMoney < amount) {
-          return message.reply("❏You don't have enough money to deposit.");
+          return message.reply("🪶 You don't have enough money to deposit. 🥺");
         }
         bankData[user].bank += amount;
         await usersData.set(event.senderID, { money: userMoney - amount });
         fs.writeFileSync(bankDataPath, JSON.stringify(bankData), "utf8");
-        return message.reply(`❏Deposited $${amount} successfully!`);
-      
+        return message.reply(`✅ Successfully deposited $${amount}! 🎉💝`);
+
       case "withdraw":
         if (isNaN(amount) || amount <= 0) {
-          return message.reply("❏Please enter a valid amount to withdraw.");
+          return message.reply("💖 Please enter a valid amount to withdraw. 🤗");
         }
         if (amount > bankBalance) {
-          return message.reply("❏Insufficient bank balance.");
+          return message.reply("🪽 Not enough balance in your bank! 😢");
         }
         bankData[user].bank -= amount;
         await usersData.set(event.senderID, { money: userMoney + amount });
         fs.writeFileSync(bankDataPath, JSON.stringify(bankData), "utf8");
-        return message.reply(`❏Withdrew $${amount} successfully!`);
+        return message.reply(`✅ You withdrew $${amount} successfully! 🎀`);
 
       case "balance":
-        return message.reply(`❏Your bank balance is: $${formatNumberWithFullForm(bankBalance)}`);
+        return message.reply(`✨ Your current bank balance is: $${formatNumberWithFullForm(bankBalance)} 💝`);
 
       case "interest":
-        const interestRate = 0.5; // 50% per 5 minutes
+        const interestRate = 0.5;
         const lastInterestClaimed = bankData[user].lastInterestClaimed || 0;
         const currentTime = Date.now();
         const timeDiffInSeconds = (currentTime - lastInterestClaimed) / 1000;
@@ -97,11 +96,11 @@ module.exports = {
           const remaining = 300 - timeDiffInSeconds;
           const min = Math.floor(remaining / 60);
           const sec = Math.floor(remaining % 60);
-          return message.reply(`❏Please wait ${min} min ${sec} sec for next interest claim.`);
+          return message.reply(`🕒 Please wait ${min}m ${sec}s before claiming interest again. 🩷`);
         }
 
         if (bankData[user].bank <= 0) {
-          return message.reply("❏You have no money in your bank account to earn interest.");
+          return message.reply("🥲 No money in your bank to earn interest. 💔");
         }
 
         const interestEarned = bankData[user].bank * interestRate;
@@ -109,43 +108,61 @@ module.exports = {
         bankData[user].lastInterestClaimed = currentTime;
         fs.writeFileSync(bankDataPath, JSON.stringify(bankData), "utf8");
 
-        return message.reply(`❏You earned interest: $${formatNumberWithFullForm(interestEarned)}!`);
+        return message.reply(`🎉 You've earned interest: $${formatNumberWithFullForm(interestEarned)} 🥰`);
 
       case "loan":
         if (bankData[user].loan > 0) {
-          return message.reply("❏You already have an active loan.");
+          return message.reply("🛑 You already have a loan active. 🥺");
         }
         if (amount !== 10000) {
-          return message.reply("❏You can only take a loan of $10,000.");
+          return message.reply("🪙 Only $10,000 loans are allowed. ✨");
         }
 
         bankData[user].loan = 10000;
         bankData[user].loanTime = Date.now();
         await usersData.set(event.senderID, { money: userMoney + 10000 });
         fs.writeFileSync(bankDataPath, JSON.stringify(bankData), "utf8");
-        return message.reply("❏You have successfully taken a loan of $10,000!");
+        return message.reply("💵 You have successfully taken a loan of $10,000! ✅💖");
 
       case "payloan":
         if (bankData[user].loan <= 0) {
-          return message.reply("❏You don't have any loan to pay.");
+          return message.reply("✅ No outstanding loan to repay. 🪽");
         }
         if (userMoney < bankData[user].loan) {
-          return message.reply("❏You don't have enough money to repay the loan.");
+          return message.reply("🥺 Not enough money to pay the loan back. 💔");
         }
 
         await usersData.set(event.senderID, { money: userMoney - bankData[user].loan });
         bankData[user].loan = 0;
         bankData[user].loanTime = null;
         fs.writeFileSync(bankDataPath, JSON.stringify(bankData), "utf8");
-        return message.reply("❏Loan repaid successfully!");
+        return message.reply("🎀 Loan repaid successfully! 🎉");
+
+      case "top":
+        const sorted = Object.entries(bankData)
+          .filter(([uid, data]) => data.bank && data.bank > 0)
+          .sort((a, b) => b[1].bank - a[1].bank)
+          .slice(0, 10);
+
+        if (sorted.length === 0) {
+          return message.reply("😶 No top users found. 💭");
+        }
+
+        let topMsg = "👑 TOP 10 BANK USERS 👑\n✨━━━━━━━━━━━━━━━✨\n";
+        for (let i = 0; i < sorted.length; i++) {
+          const [uid, data] = sorted[i];
+          let name = (await api.getUserInfo(uid))[uid]?.name || "Unknown";
+          topMsg += `${i + 1}. ${name}\n   ➤ Balance: $${formatNumberWithFullForm(data.bank)}\n`;
+        }
+
+        return message.reply(topMsg.trim());
 
       default:
-        return message.reply("❏Unknown command.");
+        return message.reply("❓ Unknown command. Please check and try again. 🎀");
     }
 
-    // Check overdue loan and deduct automatically
     if (bankData[user].loan > 0 && bankData[user].loanTime) {
-      const overdueTime = 3 * 24 * 60 * 60 * 1000; // 3 days
+      const overdueTime = 3 * 24 * 60 * 60 * 1000;
       if (Date.now() - bankData[user].loanTime > overdueTime) {
         const totalDeduct = bankData[user].loan;
         if (bankBalance >= totalDeduct) {
@@ -165,4 +182,4 @@ function formatNumberWithFullForm(number) {
   if (number >= 1e6) return (number / 1e6).toFixed(2) + "M";
   if (number >= 1e3) return (number / 1e3).toFixed(2) + "K";
   return number.toFixed(2);
-  }
+    }

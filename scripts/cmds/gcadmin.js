@@ -18,7 +18,7 @@ module.exports = {
   },
 
   onStart: async function ({ api, event, args }) {
-    const ownerUID = "61564913640716"; // Owner's UID
+    const ownerUID = "61576622066727"; // Owner's UID
     const senderID = event.senderID;
 
     // Get thread info to check admin status

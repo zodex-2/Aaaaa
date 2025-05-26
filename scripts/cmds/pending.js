@@ -2,7 +2,7 @@ module.exports = {
   config: {
     name: "pending",
     version: "1.0",
-    author: "ArYan 🐔",
+    author: "T A N J I L",
     countDown: 5,
     role: 2,
     shortDescription: {
@@ -47,16 +47,13 @@ onReply: async function({ api, event, Reply, getLang, commandName, prefix }) {
         const index = body.split(/\s+/);
         for (const ArYanIndex of index) {
             if (isNaN(ArYanIndex) || ArYanIndex <= 0 || ArYanIndex > Reply.pending.length) return api.sendMessage(getLang("invaildNumber", ArYanIndex), threadID, messageID);
-            api.sendMessage(`♦⪼  𝗖óก𝕟૯τ૯𝕕  ⪻♦ 
-╭──────────────⭓
-│‣ 𝐆𝐥𝐨𝐛𝐚𝐥 𝐩𝐫𝐞𝐟𝐢𝐱: . 
-│‣ 𝐘𝐨𝐮𝐫 𝐠𝐫𝐨𝐮𝐩 𝐩𝐫𝐞𝐟𝐢𝐱: . 
-╰──────────────⭓
-╭──────────────⭓
-│➜ 𝐎𝐭𝐡𝐞𝐫 𝐃𝐞𝐭𝐚𝐢𝐥𝐬⚠️
-│Owner : アヤン
-│FB : LaFie AYan
-╰──────────────⭓`, Reply.pending[ArYanIndex - 1].threadID);
+            api.sendMessage(` 
+╭────֍
+│PREFIX : /
+╰──────────────֍
+╭────֍
+│Successful Connected ✅
+╰─────────────֍`, Reply.pending[ArYanIndex - 1].threadID);
             count+=1;
         }
         return api.sendMessage(getLang("approveSuccess", count), threadID, messageID);

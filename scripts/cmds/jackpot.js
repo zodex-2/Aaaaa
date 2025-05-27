@@ -1,10 +1,10 @@
 module.exports = {
   config: {
     name: "jackpot",
-    version: "2.0",
+    version: "3.1",
     author: "T A N J I L",
-    shortDescription: { en: "Jackpot game" },
-    longDescription: { en: "Try your luck in the jackpot game!" },
+    shortDescription: { en: "Jackpot Bet Game" },
+    longDescription: { en: "Try your luck and win big in the jackpot bet game!" },
     category: "Game",
   },
 
@@ -12,10 +12,12 @@ module.exports = {
     en: {
       invalid_amount: "⚠️ Invalid bet amount. Please enter a valid number like 1B, 10M, 500K, etc.",
       not_enough_money: "⚠️ You don't have enough balance to make this bet.",
-      win_message:
-        "╭─────\n│\n│     congratulations 🎉\n│\n│     YOU WIN 10× = $%1\n│     Balance: $%2\n│\n│         J A C K P O T\n╰─────",
+      jackpot_win:
+        "╭─────\n│\n│     JACKPOT HIT!!\n│\n│     YOU WIN 50× = $%1\n│     Balance: $%2\n│\n│     *** JACKPOT ***\n╰─────",
+      normal_win:
+        "╭─────\n│\n│     You Won!\n│\n│     YOU WIN %1× = $%2\n│     Balance: $%3\n│\n│         B E T\n╰─────",
       lose_message:
-        "╭─────\n│\n│     Sorry...\n│\n│     You lost your bet of $%1.\n│     Balance: $%2\n│\n│         J A C K P O T\n╰─────",
+        "╭─────\n│\n│     Sorry...\n│\n│     You lost your bet of $%1.\n│     Balance: $%2\n│\n│         B E T\n╰─────",
     },
   },
 
@@ -25,7 +27,7 @@ module.exports = {
     const isAdmin = adminIDs.includes(senderID);
 
     const input = args[0]?.toLowerCase();
-    if (!input) return message.reply("⚠️ Please specify your bet amount. Example: /jackpot 1B");
+    if (!input) return message.reply("⚠️ Please specify your bet amount. Example: /bet 1B");
 
     const isForceWin = input.endsWith(".win");
     const rawAmount = isForceWin ? input.replace(".win", "") : input;
@@ -50,28 +52,37 @@ module.exports = {
       return message.reply(getLang("not_enough_money"));
     }
 
-    const isWinner = isForceWin ? isAdmin : Math.random() < 0.1;
     let winAmount = 0;
     let resultText = "";
+    let finalBalance = balance;
 
-    if (isWinner) {
-      winAmount = betAmount * 10;
-      const finalBalance = balance + winAmount;
-      resultText = getLang("win_message", formatCurrency(winAmount), formatCurrency(finalBalance));
+    const roll = Math.random();
+
+    if (isForceWin ? isAdmin : roll < 0.05) {
+      // Jackpot win - 5% chance
+      winAmount = betAmount * 50;
+      finalBalance += winAmount;
+      resultText = getLang("jackpot_win", formatCurrency(winAmount), formatCurrency(finalBalance));
+    } else if (roll < 0.6 || isForceWin) {
+      // Normal win (1.0x to 3.0x)
+      const multiplier = (Math.random() * 2 + 1).toFixed(1); // 1.0 to 3.0
+      winAmount = betAmount * parseFloat(multiplier);
+      finalBalance += winAmount;
+      resultText = getLang("normal_win", multiplier, formatCurrency(winAmount), formatCurrency(finalBalance));
     } else {
+      // Lose
       winAmount = -betAmount;
-      const finalBalance = balance + winAmount;
+      finalBalance += winAmount;
       resultText = getLang("lose_message", formatCurrency(betAmount), formatCurrency(finalBalance));
     }
 
     await usersData.set(senderID, {
-      money: balance + winAmount,
+      money: finalBalance,
       data: userData.data,
     });
 
     return message.reply(resultText);
 
-    // Format number to currency with unit
     function formatCurrency(number) {
       if (number >= 1e15) return (number / 1e15).toFixed(2) + "Q";
       if (number >= 1e12) return (number / 1e12).toFixed(2) + "T";

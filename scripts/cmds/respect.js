@@ -18,7 +18,7 @@ module.exports = {
   },
 
   onStart: async function ({ api, event }) {
-    const ownerUID = "61576622066727";
+    const ownerUID = "61577030781656";
     
     if (event.senderID !== ownerUID) {
       return api.sendMessage("Sorry, only the owner can use this command!", event.threadID);

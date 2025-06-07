@@ -6,7 +6,7 @@ module.exports = {
     aliases: ["upscale"],
     version: "1.1",
     role: 0,
-    author: "Team Calyx",
+    author: "Fahim_Noob",
     countDown: 5,
     longDescription: "Upscale images to 4K resolution.",
     category: "image",
@@ -20,7 +20,7 @@ module.exports = {
     }
     const imgurl = encodeURIComponent(event.messageReply.attachments[0].url);
     const noobs = 'xyz';
-    const upscaleUrl = `https://smfahim.onrender.com/4k?url=${imgurl}`;
+    const upscaleUrl = `https://smfahim.${noobs}/4k?url=${imgurl}`;
     
     message.reply("🔄| Processing... Please wait a moment.", async (err, info) => {
       try {

@@ -2,8 +2,8 @@ module.exports = {
   config: {
     name: "spy",
     version: "3.0",
-    author: "T A N J I L",
-    countDown: 60,
+    author: "T A N J I L 🎀",
+    countDown: 5,
     role: 0,
     shortDescription: "See detailed user info",
     longDescription: "Fetch full profile info including name, UID, gender, balance, and more.",
@@ -40,27 +40,50 @@ module.exports = {
 
       const avatarUrl = await usersData.getAvatarUrl(uid);
       const data = await usersData.get(uid);
+      const senderInfo = await usersData.get(event.senderID);
+      const senderName = senderInfo.name || "User";
 
       const name = userInfo[uid].name || "Unknown";
       const gender = userInfo[uid].gender === 1 ? "Female" : userInfo[uid].gender === 2 ? "Male" : "Unknown";
       const isFriend = userInfo[uid].isFriend ? "Yes" : "No";
-      const isBirthday = userInfo[uid].isBirthday ? "Yes" : "No";
+      const isBirthday = userInfo[uid].isBirthday ? "Yes" : "private";
       const profileUrl = `https://www.facebook.com/${uid}`;
       const balance = data.money || 0;
+      const exp = data.exp || 0;
+      const level = Math.floor(0.1 * Math.sqrt(exp)); // ← Calculated from exp
+
+      const threadNickname = event.threadID && uid ? (await api.getThreadInfo(event.threadID)).nicknames?.[uid] : null;
+      const nickname = threadNickname || "Not set in group";
+
+      const allUsers = await usersData.getAll();
+      const sortedUsers = allUsers
+        .filter(user => typeof user.money === 'number')
+        .sort((a, b) => b.money - a.money);
+
+      const userRankIndex = sortedUsers.findIndex(user => user.userID === uid);
+      const rankPosition = userRankIndex !== -1 ? `Rank ${userRankIndex + 1}` : "Unranked";
 
       const fancyInfo = 
-`╭───────────────┈⊷
-│ 𝗨𝗦𝗘𝗥 𝗜𝗡𝗙𝗢 𝗧𝗥𝗔𝗖𝗞𝗘𝗥
-├───────────────┈⊷
-│ 🧑‍💼 𝗡𝗮𝗺𝗲: ${name}
-│ 🆔 𝗨𝗜𝗗: ${uid}
-│ ⚖️ 𝗕𝗮𝗹𝗮𝗻𝗰𝗲: $${balance}
-│ ⚧️ 𝗚𝗲𝗻𝗱𝗲𝗿: ${gender}
-│ 🎉 𝗕𝗶𝗿𝘁𝗵𝗱𝗮𝘆 𝗧𝗼𝗱𝗮𝘆: ${isBirthday}
-│ 🤝 𝗙𝗿𝗶𝗲𝗻𝗱: ${isFriend}
-│ 🌐 𝗣𝗿𝗼𝗳𝗶𝗹𝗲: 
-│ ${profileUrl}
-╰───────────────┈⊷`;
+`╭Hello ${senderName}
+│  
+│✨𝐍𝐚𝐦𝐞: ${name}
+│✨𝐧𝐢𝐜𝐤: ${nickname}
+│✨𝐔𝐢𝐝: ${uid}
+│
+│💵𝐁𝐚𝐥𝐚𝐧𝐜𝐞 : $${balance}
+│✨ 𝐄𝐱𝐩 : ${exp}
+│✨ 𝐋𝐞𝐯𝐞𝐥 : ${level}
+│✨ 𝐑𝐚𝐧𝐤 : ${rankPosition}
+│
+│✨ 𝐆𝐞𝐧𝐝𝐞𝐫 : ${gender}
+│🎂 𝐁𝐢𝐫𝐭𝐡𝐝𝐚𝐲 : ${isBirthday}
+│💑 𝐑𝐞𝐥𝐚𝐭𝐢𝐨𝐧𝐬𝐡𝐢𝐩 : Single 
+│
+│🤝 𝐅𝐫𝐢𝐞𝐧𝐝 : ${isFriend}
+│🌐 𝐏𝐫𝐨𝐟𝐢𝐥𝐞 𝐋𝐢𝐧𝐤: 
+│${profileUrl}
+│
+╰───────────────֍`;
 
       return message.reply({
         body: fancyInfo,

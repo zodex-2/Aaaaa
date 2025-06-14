@@ -13,7 +13,7 @@ async function getUploadApiUrl() {
 }
 
 async function handleCatboxUpload({ event, api, message }) {
-  const { messageReply } = event;
+  const { messageReply, messageID } = event;
   if (!messageReply || !messageReply.attachments || messageReply.attachments.length === 0) {
     return message.reply("Please reply to an image or video.");
   }
@@ -21,7 +21,14 @@ async function handleCatboxUpload({ event, api, message }) {
   const fileUrl = messageReply.attachments[0].url;
   const ext = messageReply.attachments[0].type === "photo" ? ".jpg" : ".mp4";
   const filePath = path.join(__dirname, "temp" + ext);
-  const loadingMsg = await message.reply("⏳ Meow~ Uploading your media to the magical Catbox...");
+
+  // React with 🕛 during upload
+  api.setMessageReaction("🕛", messageID, () => {}, true);
+  const loading = await message.reply("⏳ Meow~ Uploading your media to the magical Catbox...");
+
+  setTimeout(() => {
+    api.unsendMessage(loading.messageID);
+  }, 5000);
 
   try {
     const uploadApiUrl = await getUploadApiUrl();
@@ -45,19 +52,14 @@ async function handleCatboxUpload({ event, api, message }) {
 
     fs.unlinkSync(filePath);
 
-    const catboxMessage =
-`╔════════════════╗
-║Successfully Uploaded ✅
-║ URL: ${upload.data}
-╚════════════════╝`;
-
-    api.editMessage(catboxMessage, loadingMsg.messageID);
+    // ✅ React on success
+    api.setMessageReaction("✅", messageID, () => {}, true);
+    return message.reply(upload.data);
   } catch (err) {
     fs.existsSync(filePath) && fs.unlinkSync(filePath);
-    api.editMessage(
-      "╔══✘ ERROR ✘══╗\n║ Failed to upload to Catbox.\n╚═══════════════╝",
-      loadingMsg.messageID
-    );
+    // ❌ React on failure
+    api.setMessageReaction("❌", messageID, () => {}, true);
+    return message.reply("❌ Failed to upload to Catbox.");
   }
 }
 
@@ -65,31 +67,19 @@ module.exports = {
   config: {
     name: "catbox",
     aliases: ["ct"],
-    version: "1.2",
-    author: "Eren",
+    version: "1.3",
+    author: "MaHU",
     countDown: 5,
     role: 0,
     shortDescription: "Upload media to catbox.moe",
     longDescription: "Upload replied image or video to catbox.moe and get link",
     category: "tools",
     guide: {
-      en: "{pn} (reply to image/video) or reply with 'catbox'/'ct'"
+      en: "{pn} (reply to image/video)"
     }
   },
 
   onStart: async function ({ event, api, message }) {
     return handleCatboxUpload({ event, api, message });
-  },
-
-  onChat: async function ({ event, api, message }) {
-    const { body, messageReply } = event;
-    if (!body || !messageReply) return;
-
-    const trigger = body.toLowerCase().trim();
-    const cmds = [this.config.name, ...(this.config.aliases || [])];
-
-    if (cmds.includes(trigger)) {
-      return handleCatboxUpload({ event, api, message });
-    }
   }
 };

@@ -17,18 +17,18 @@
     "ignoreCommand": []
   },
   "adminBot": [
-    "61564913640716",
-    "61577095705293",
-    "100093052407139",
-    "61576569645900"
+    "100092278980386",
+    "",
+    "",
+    ""
   ],
   "whiteListMode": {
     "enable": false,
     "whiteListIds": [61577095705293],
     "notes": "if you enable this feature, only the ids in the whiteListIds section can use the bot"
   },
-  "nickNameBot": "〲٭⃝✨⃝YOUR 卝 চুন্নি ⃝✨⃝٭",
-  "prefix": "/",
+  "nickNameBot": "akatakuso💫😾",
+  "prefix": "'",
   "database": {
     "type": "mongodb",
     "uriMongodb": "mongodb+srv://tanjil4:tanjil4@cluster0.lqh9lyk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
